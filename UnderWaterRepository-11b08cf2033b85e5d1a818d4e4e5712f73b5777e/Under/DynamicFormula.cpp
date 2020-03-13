@@ -153,12 +153,13 @@ Vector3d DynamicFormula::vec62Vec32(VectorXd wv) {
 }
 
 void DynamicFormula::nextTime() {
+	//set_tsfs();
 	lp_ = computelp_();
 //	cout << "oldlp" << lp << endl;
 //	cout << "nextlp_:" << lp_<< endl;
 	lp=computeNextlp();//lp
 //	cout << "lp:" << lp << endl;
-	VectorXd tempwv= 0.5*computeNextwv();
+	VectorXd tempwv= 0.5*computeNextwv();//
 	//cout << "tempwv" << tempwv << endl;
 //	cout << "w:"<<w(0)<<" " << w(1) << " " << w(2) << endl;
 //	cout << "v:"<<v(0) << " " << v(1) << " " << v(2) << endl;
@@ -173,7 +174,51 @@ void DynamicFormula::nextTime() {
 //	cout << "w:" << w(0) << " " << w(1) << " " << w(2) << endl;
 //	cout << "v:" << v(0) << " " << v(1) << " " << v(2) << endl;
 }
-void DynamicFormula::set_tsfs(Vector3d ts,Vector3d fs) {
 
+VectorXd DynamicFormula::compute_tvfv() {
+	//compute e1 e2 e3
+	cout << "compute_tvfv" << endl;
+
+	Matrix3d Rt = R.transpose();
+	Vector3d velocityInBody = Rt * v;//物体坐标系的速度
+	Vector3d omegaInBody = Rt * w;//物体坐标系的速度
+
+	Vector3d e1 = velocityInBody;
+	Vector3d e2 = omegaInBody.cross(velocityInBody);
+	Vector3d e3 = (omegaInBody.cross(velocityInBody)).cross(velocityInBody);
+	double A = a * b* pi;
+	
+	cout << "velocityInBody" << velocityInBody<< endl;
+	if (abs(velocityInBody(0)) <= 0.001) {
+		cout << "速度为零，不能计算alpha" << endl;
+	}
+	double alpha = atan(velocityInBody(1) / velocityInBody(0));//绝对值？
+	cout << "alpha" << alpha << endl;
+	double puA_2 = 0.5*fluidDensity*(v.norm()*v.norm());
+	cout << "puA_2" << puA_2 << endl;
+	Vector3d fD = -puA_2 * CD*sin(alpha)*e1;
+	Vector3d fL1 = puA_2 * CL1*sin(2*alpha)*e2;
+	Vector3d fL2 = puA_2 * CL2*cos(2*alpha)*e3;
+
+	Vector3d fv = fD + fL1 + fL2;
+	Vector3d aAxis(1, 0, 0);//a长轴物体坐标系的x轴
+	Vector3d p = ( (1 - sin(alpha)*sin(alpha)*sin(alpha) )*a / 4)*aAxis;
+	cout << "p" << p << endl;
+	Vector3d tv = p.cross(fv);
+
+	cout << "tv" << tv << endl;
+	VectorXd tvfv(6);//不加（6）bug!!!!!!!
+	tvfv.block(0, 0, 3, 1) = tv;
+	tvfv.block(3, 0, 3, 1) = fv;
+	cout << "tvfv" << tvfv << endl;
+	tvfv = tvfv;
+
+	return tvfv;
+}
+
+void DynamicFormula::set_tsfs() {
+	//VectorXd tvfv = compute_tvfv();//加上粘性效应的力
+	
+	//cout << "tsfs" << tsfs << endl;
 	//this->tsfs
 }

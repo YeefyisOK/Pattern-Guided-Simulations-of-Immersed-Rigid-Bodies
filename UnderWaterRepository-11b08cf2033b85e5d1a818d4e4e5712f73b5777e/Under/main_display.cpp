@@ -22,7 +22,7 @@ using namespace Eigen;
 int id = 0;
 long imagewidth = 600;
 long imageheight = 800;
-string name = "H:\\MeshData\\bunnysmall.obj";//yuanpan1lab.obj tuoqiu2lab  myproplab bunnysmall
+string name = "H:\\MeshData\\yuanpan1labAxis.obj";//yuanpan1lab.obj tuoqiu2lab  myproplab bunnysmall
 
 PIC *m_pic = new PIC();
 PICnew *m_picnew;
@@ -31,7 +31,7 @@ void drawScene();
 GLdouble windowWidth;
 GLdouble windowHeight;
 Vector3d omega(	0, 0, 0);
-Vector3d velocity(0, 0, 0);			
+Vector3d velocity(0, 0, 0);			//1, 1, 1
 Matrix3d R = Matrix3d::Identity();//设置为单位阵 在init()改不是单位阵
 Vector3d y(0,8,0);
 double m_fluidDensity = 0.98;
@@ -148,6 +148,7 @@ void init() {
 	CKirchhoff m_K(m_picnew, m_bodyDensity, m_fluidDensity);
 	MatrixXd K = m_K.computeK();//初始时得到K矩阵
 	VectorXd m_tsfs = m_K.computetsfs();
+	m_DF.fluidDensity = m_K.fluidDensity;
 	m_DF.tsfs = m_tsfs;
 	m_DF.q = R;
 	m_DF.setK(K);

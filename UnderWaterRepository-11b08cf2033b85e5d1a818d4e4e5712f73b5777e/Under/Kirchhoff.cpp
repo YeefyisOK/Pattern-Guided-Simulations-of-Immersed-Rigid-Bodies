@@ -440,6 +440,10 @@ VectorXd CKirchhoff::computetsfs() {
 	Vector3d g(0, -9.8, 0);
 	Vector3d tg(0, 0, 0);//质量均匀分布
 	Vector3d fg=(bodyMass - volume*fluidDensity)*g;//(0, 0, 0);//
+	/*
+	Vector3d fd=0.5*fluidDensity
+	Vector3d fL1 =
+	Vector3d fL2 =*/
 	tsfs.block(0, 0, 3, 1) = tg;
 	tsfs.block(3, 0, 3, 1) = fg;
 	return tsfs;

@@ -6,6 +6,7 @@
 #include <Eigen/SVD>  
 //#include"Quaternion.h"
 #include <iostream>
+#define pi 3.1415926;
 using namespace std;
 using namespace Eigen;
 class DynamicFormula
@@ -33,7 +34,8 @@ public:
 	Vector3d vec62Vec31(VectorXd ab);
 	Vector3d vec62Vec32(VectorXd ab);
 	void nextTime();
-	void set_tsfs(Vector3d ts,Vector3d fs);
+	VectorXd compute_tvfv();//计算粘性影响的力
+	void set_tsfs();
 	float* GetRotAndTransData();
 //private:
 	//初始时刻的 6+1个量
@@ -45,11 +47,17 @@ public:
 	VectorXd tsfs;
 	VectorXd lp;
 	VectorXd lp_;
-
+	double fluidDensity;
 	MatrixXd K;
 	double delta_t;
 	//平移旋转需要的两个参数
 	Quaterniond delta_q;
 	double theta;
+
+	VectorXd tvfv;
+	double a=8.0, b=8.0, c=1.0;//椭球长短轴
+	double CD=0.5;
+	double CL1=0.5;
+	double CL2=0.5;
 
 };
