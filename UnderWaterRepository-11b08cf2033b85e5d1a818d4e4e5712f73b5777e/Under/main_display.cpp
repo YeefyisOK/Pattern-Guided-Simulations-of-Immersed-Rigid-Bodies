@@ -22,7 +22,7 @@ using namespace Eigen;
 int id = 0;
 long imagewidth = 600;
 long imageheight = 800;
-string name = "H:\\MeshData\\yuanpan1labAxis.obj";//yuanpan1lab.obj tuoqiu2lab  myproplab bunnysmall
+string name = "H:\\MeshData\\yuanpan.obj";//yuanpan1lab.obj tuoqiu2lab  myproplab bunnysmall
 
 PIC *m_pic = new PIC();
 PICnew *m_picnew;
@@ -31,7 +31,7 @@ void drawScene();
 GLdouble windowWidth;
 GLdouble windowHeight;
 Vector3d omega(	0, 0, 0);
-Vector3d velocity(0, 0, 0);			//1, 1, 1
+Vector3d velocity(0, 0.1, 0);			//1, 1, 1
 Matrix3d R = Matrix3d::Identity();//设置为单位阵 在init()改不是单位阵
 Vector3d y(0,8,0);
 double m_fluidDensity = 0.98;
@@ -143,6 +143,33 @@ void init() {
 	R.row(0) = R.row(1);
 	R.row(1) = temp;
 	m_DF.setR(R);*/
+	//把物体旋转一个角度
+	MatrixXd temp(3,3);
+	temp.setIdentity();
+	/*
+	temp(0, 0) = 0.638566;
+	temp(0, 1) = -0.604284;
+	temp(0, 2) = 0.476523;
+
+	temp(1, 0) = 0.586569;
+	temp(1, 1) = -0.0186513;
+	temp(1, 2) = -0.809685;
+
+	temp(2, 0) = 0.498167;
+	temp(2, 1) = 0.796551;
+	temp(2, 2) = 0.342544;*/
+	Vector3d temp0(0.998818, - 0.04777, 0.00903266);
+	Vector3d temp1(0.0478093,  0.931416 ,- 0.360803);
+	Vector3d temp2(0.00882242 , 0.360809,  0.932598);
+	temp.block(0, 0, 1, 3)=temp0;
+	temp.block(1, 0, 1, 3)=temp1;
+	temp.block(2, 0, 1, 3)=temp2;
+
+	R = R * temp;
+	/*
+	 0.998818   -0.04777 0.00903266
+ 0.0478093   0.931416  -0.360803
+0.00882242   0.360809   0.932598*/
 	ReadPIC();
 	//基尔霍夫张量
 	CKirchhoff m_K(m_picnew, m_bodyDensity, m_fluidDensity);

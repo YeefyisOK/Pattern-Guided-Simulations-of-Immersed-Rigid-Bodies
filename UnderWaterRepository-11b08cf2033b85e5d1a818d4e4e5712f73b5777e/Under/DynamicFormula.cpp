@@ -2,6 +2,9 @@
 DynamicFormula::DynamicFormula(Vector3d omega, Vector3d velocity, Matrix3d R,
 	Vector3d y,double delta_t)
 {
+	VectorXd zero(6);
+	zero.setZero();
+	tvfv = zero;//赋初值，避免出错
 	this->w = omega;
 	this->v = velocity;
 	this->R = R; //R如何初始化
@@ -59,6 +62,7 @@ VectorXd DynamicFormula::computelp() {
 	return K * wv;
 }
 VectorXd DynamicFormula::computelp_() {
+	
 	Matrix3d Y = toDaOmegaOrY(y);
 	VectorXd tf = tsfs2tf(Y);
 	Vector3d l = vec62Vec31(lp);
@@ -68,7 +72,10 @@ VectorXd DynamicFormula::computelp_() {
 	VectorXd ab(6);
 	ab.block(0, 0, 3, 1) = a;
 	ab.block(3, 0, 3, 1) = b;
-	return ab + tf;
+	
+	cout << "ab+tf+tvfv" << ab + tf+tvfv << endl;
+	cout << "ab+tf" << ab + tf << endl;
+	return ab + tf + tvfv;// 
 }
 Matrix3d DynamicFormula::computeNextR() {
 	Vector3d Rw = R *w;// 
@@ -153,7 +160,6 @@ Vector3d DynamicFormula::vec62Vec32(VectorXd wv) {
 }
 
 void DynamicFormula::nextTime() {
-	//set_tsfs();
 	lp_ = computelp_();
 //	cout << "oldlp" << lp << endl;
 //	cout << "nextlp_:" << lp_<< endl;
@@ -171,6 +177,7 @@ void DynamicFormula::nextTime() {
 	cout << "R:" << R << endl;
 	w = tempwv.block(0, 0, 3, 1);//w
 	v = tempwv.block(3, 0, 3, 1);//v
+	compute_tvfv();
 //	cout << "w:" << w(0) << " " << w(1) << " " << w(2) << endl;
 //	cout << "v:" << v(0) << " " << v(1) << " " << v(2) << endl;
 }
@@ -187,12 +194,18 @@ VectorXd DynamicFormula::compute_tvfv() {
 	Vector3d e2 = omegaInBody.cross(velocityInBody);
 	Vector3d e3 = (omegaInBody.cross(velocityInBody)).cross(velocityInBody);
 	double A = a * b* pi;
-	
+	double alpha;
 	cout << "velocityInBody" << velocityInBody<< endl;
-	if (abs(velocityInBody(0)) <= 0.001) {
-		cout << "速度为零，不能计算alpha" << endl;
+
+	Vector3d vt(velocityInBody(0), 0, 0);
+	Vector3d vn(0,velocityInBody(1) , velocityInBody(2));
+	cout << "vt" << vt << endl;
+	cout << "vn" << vn << endl;
+	if (abs( vt.norm() ) <= 0.001) {
+		cout << "速度为零，不能计算alpha,直接赋值为0" << endl;
+		alpha = 0;
 	}
-	double alpha = atan(velocityInBody(1) / velocityInBody(0));//绝对值？
+	alpha = atan(vn.norm() / vt.norm());//绝对值？
 	cout << "alpha" << alpha << endl;
 	double puA_2 = 0.5*fluidDensity*(v.norm()*v.norm());
 	cout << "puA_2" << puA_2 << endl;
