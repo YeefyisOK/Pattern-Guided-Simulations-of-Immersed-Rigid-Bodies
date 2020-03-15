@@ -22,7 +22,7 @@ using namespace Eigen;
 int id = 0;
 long imagewidth = 600;
 long imageheight = 800;
-string name = "H:\\MeshData\\yuanpan.obj";//yuanpan1lab.obj tuoqiu2lab  myproplab bunnysmall
+string name = "H:\\MeshData\\yuanpan.obj";//yuanpan yuanpan1lab.obj tuoqiu2lab  myproplab bunnysmall
 
 PIC *m_pic = new PIC();
 PICnew *m_picnew;
@@ -165,7 +165,7 @@ void init() {
 	temp.block(1, 0, 1, 3)=temp1;
 	temp.block(2, 0, 1, 3)=temp2;
 
-	R = R * temp;
+	R = R* temp;
 	/*
 	 0.998818   -0.04777 0.00903266
  0.0478093   0.931416  -0.360803

@@ -75,7 +75,7 @@ VectorXd DynamicFormula::computelp_() {
 	
 	cout << "ab+tf+tvfv" << ab + tf+tvfv << endl;
 	cout << "ab+tf" << ab + tf << endl;
-	return ab + tf + tvfv;// 
+	return ab + tf + tvfv;//
 }
 Matrix3d DynamicFormula::computeNextR() {
 	Vector3d Rw = R *w;// 
@@ -177,12 +177,18 @@ void DynamicFormula::nextTime() {
 	cout << "R:" << R << endl;
 	w = tempwv.block(0, 0, 3, 1);//w
 	v = tempwv.block(3, 0, 3, 1);//v
-	compute_tvfv();
+	tvfv=compute_tvfv();
 //	cout << "w:" << w(0) << " " << w(1) << " " << w(2) << endl;
 //	cout << "v:" << v(0) << " " << v(1) << " " << v(2) << endl;
 }
 
 VectorXd DynamicFormula::compute_tvfv() {
+	if (0.5 ==CL2) {
+		CL2 = -0.5;
+	}
+	else {
+		CL2 = 0.5;
+	}
 	//compute e1 e2 e3
 	cout << "compute_tvfv" << endl;
 
@@ -193,6 +199,11 @@ VectorXd DynamicFormula::compute_tvfv() {
 	Vector3d e1 = velocityInBody;
 	Vector3d e2 = omegaInBody.cross(velocityInBody);
 	Vector3d e3 = (omegaInBody.cross(velocityInBody)).cross(velocityInBody);
+
+	cout << "e1" << e1 << endl;
+	cout << "e2" << e2 << endl;
+	cout << "e3" << e3 << endl;
+
 	double A = a * b* pi;
 	double alpha;
 	cout << "velocityInBody" << velocityInBody<< endl;
@@ -207,12 +218,15 @@ VectorXd DynamicFormula::compute_tvfv() {
 	}
 	alpha = atan(vn.norm() / vt.norm());//绝对值？
 	cout << "alpha" << alpha << endl;
-	double puA_2 = 0.5*fluidDensity*(v.norm()*v.norm());
+	double puA_2 = 0.5*fluidDensity*(v.norm()*v.norm())*A;
 	cout << "puA_2" << puA_2 << endl;
 	Vector3d fD = -puA_2 * CD*sin(alpha)*e1;
-	Vector3d fL1 = puA_2 * CL1*sin(2*alpha)*e2;
-	Vector3d fL2 = puA_2 * CL2*cos(2*alpha)*e3;
+	Vector3d fL1 = puA_2 * CL1*sin(2 * alpha)*e2;
+	Vector3d fL2 = puA_2 * CL2*cos(2*alpha)*e3; 
 
+	cout << "fD" << fD << endl;
+	cout << "fL1" << fL1 << endl;
+	cout << "fL2" << fL2 << endl;
 	Vector3d fv = fD + fL1 + fL2;
 	Vector3d aAxis(1, 0, 0);//a长轴物体坐标系的x轴
 	Vector3d p = ( (1 - sin(alpha)*sin(alpha)*sin(alpha) )*a / 4)*aAxis;
@@ -220,13 +234,13 @@ VectorXd DynamicFormula::compute_tvfv() {
 	Vector3d tv = p.cross(fv);
 
 	cout << "tv" << tv << endl;
-	VectorXd tvfv(6);//不加（6）bug!!!!!!!
-	tvfv.block(0, 0, 3, 1) = tv;
-	tvfv.block(3, 0, 3, 1) = fv;
-	cout << "tvfv" << tvfv << endl;
-	tvfv = tvfv;
+	VectorXd tvfv1(6);//不加（6）bug!!!!!!!
+	tvfv1.block(0, 0, 3, 1) = tv;
+	tvfv1.block(3, 0, 3, 1) = fv;
+	cout << "tvfv1" << tvfv1 << endl;
+	//tvfv = tvfv1;
 
-	return tvfv;
+	return tvfv1;
 }
 
 void DynamicFormula::set_tsfs() {

@@ -55,9 +55,9 @@ public:
 	double theta;
 
 	VectorXd tvfv;
-	double a=8.0, b=8.0, c=1.0;//椭球长短轴
-	double CD=0.5;
-	double CL1=0.5;
+	double a=2, b=2, c=0.1;//椭球长短轴，需要改一下
+	double CD=1;
+	double CL1=2;
 	double CL2=0.5;
 
 };
