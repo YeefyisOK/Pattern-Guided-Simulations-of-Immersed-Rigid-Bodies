@@ -173,6 +173,10 @@ void init() {
 	ReadPIC();
 	//基尔霍夫张量
 	CKirchhoff m_K(m_picnew, m_bodyDensity, m_fluidDensity);
+	m_DF.a = m_picnew->a;
+	m_DF.b = m_picnew->b;
+	m_DF.c = m_picnew->c;
+	cout<<"mDFabc"<< m_DF.a << " " << m_DF.b << " " << m_DF.c << endl;
 	MatrixXd K = m_K.computeK();//初始时得到K矩阵
 	VectorXd m_tsfs = m_K.computetsfs();
 	m_DF.fluidDensity = m_K.fluidDensity;

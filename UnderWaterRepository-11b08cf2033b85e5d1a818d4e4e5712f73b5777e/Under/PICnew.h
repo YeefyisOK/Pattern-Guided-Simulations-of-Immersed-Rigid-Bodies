@@ -8,6 +8,9 @@
 #include "PIC.h"
 #include"PICnew.h"
 #include "iostream"
+#define infmax 10000;
+#define infmin -10000;
+
 using namespace std;
 using namespace Eigen;
 struct VertexandNormalST//顶点坐标和顶点法向
@@ -29,5 +32,5 @@ public:
 	vector <FaceandNormalST> faceandnormal;
 	PICnew(PIC *m_PIC);
 	//PICnew();	
-
+	double a, b, c;//x,y,z轴长度
 };

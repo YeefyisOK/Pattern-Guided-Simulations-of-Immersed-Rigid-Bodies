@@ -30,12 +30,51 @@ PICnew::PICnew(PIC *m_PIC) {
 	//numandnormal vn[n];
 	vector <numandnormalST> vn;//顶点法向   0   1个   n1；1  4个   n1+n
 	numandnormalST *numandnormal = new numandnormalST();
+	double maxa= infmin;
+	double mina= infmax;
+
+	double maxb = infmin;
+	double minb = infmax;
+
+	double maxc = infmin;
+	double minc = infmax;
+
+	Vector3d e1(1, 0, 0);
+	Vector3d e2(0, 1, 0);
+	Vector3d e3(0, 0, 1);
+	//遍历所有点
 	for (int i = 0;i < n;i++) {//顶点数量2+n3+n4;
 		numandnormal->num = 0;
 		Vector3d zero(0, 0, 0);
 		numandnormal->normal = zero;
 		vn.push_back(*numandnormal);
+
+		if (m_PIC->V[i].X > maxa) {
+			maxa = m_PIC->V[i].X;
+		}
+		else if (m_PIC->V[i].X < mina) {
+			mina= m_PIC->V[i].X;
+		}
+
+		if (m_PIC->V[i].Y > maxb) {
+			maxb = m_PIC->V[i].Y;
+		}
+		else if (m_PIC->V[i].Y < minb) {
+			minb = m_PIC->V[i].Y;
+		}
+
+		if (m_PIC->V[i].Z > maxc) {
+			maxc = m_PIC->V[i].Z;
+		}
+		else if (m_PIC->V[i].Z < minc) {
+			minc = m_PIC->V[i].Z;
+		}
+
 	}
+	a = maxa - mina;
+	b = maxb - minb;
+	c = maxc - minc;
+	cout << "a,b,c" << a << " " << b << " " << c << endl;
 	for (int i = 0;i < faceandnormal.size();i++) {//遍历所有的面
 		vn[faceandnormal[i].vertexIndex[0]].num++;
 		vn[faceandnormal[i].vertexIndex[0]].normal += faceandnormal[i].faceNormal;

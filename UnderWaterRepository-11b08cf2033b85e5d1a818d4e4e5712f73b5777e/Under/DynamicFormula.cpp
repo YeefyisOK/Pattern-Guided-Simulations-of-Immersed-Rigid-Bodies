@@ -204,7 +204,7 @@ VectorXd DynamicFormula::compute_tvfv() {
 	cout << "e2" << e2 << endl;
 	cout << "e3" << e3 << endl;
 
-	double A = a * b* pi;
+	double A = a * c* pi;
 	double alpha;
 	cout << "velocityInBody" << velocityInBody<< endl;
 
